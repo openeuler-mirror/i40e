@@ -1,0 +1,51 @@
+From e43f6fdd252c2b85a626e10f3eda7b27192cedcf Mon Sep 17 00:00:00 2001
+From: hanzhijun <hanzhijun1@huawei.com>
+Date: Fri, 5 Feb 2021 15:57:13 +0800
+Subject: [PATCH] fix gcc9 new warning
+
+---
+ src/i40e_txrx.c | 21 +++++++++++----------
+ 1 file changed, 11 insertions(+), 10 deletions(-)
+
+diff --git a/src/i40e_txrx.c b/src/i40e_txrx.c
+index ea07464..0ca5a17 100644
+--- a/src/i40e_txrx.c
++++ b/src/i40e_txrx.c
+@@ -9,6 +9,17 @@
+ #include "i40e_trace.h"
+ #include "i40e_prototype.h"
+ 
++/**
++ * i40e_rx_offset - Return expected offset into page to access data
++ * @rx_ring: Ring we are requesting offset of
++ *
++ * Returns the offset value for ring into the data buffer.
++ */
++static inline unsigned int i40e_rx_offset(struct i40e_ring *rx_ring)
++{
++	return ring_uses_build_skb(rx_ring) ? I40E_SKB_PAD : 0;
++}
++
+ static inline __le64 build_ctob(u32 td_cmd, u32 td_offset, unsigned int size,
+ 				u32 td_tag)
+ {
+@@ -1776,16 +1787,6 @@ static bool i40e_alloc_mapped_skb(struct i40e_ring *rx_ring,
+ }
+ 
+ #else /* CONFIG_I40E_DISABLE_PACKET_SPLIT */
+-/**
+- * i40e_rx_offset - Return expected offset into page to access data
+- * @rx_ring: Ring we are requesting offset of
+- *
+- * Returns the offset value for ring into the data buffer.
+- */
+-static inline unsigned int i40e_rx_offset(struct i40e_ring *rx_ring)
+-{
+-	return ring_uses_build_skb(rx_ring) ? I40E_SKB_PAD : 0;
+-}
+ 
+ /**
+  * i40e_alloc_mapped_page - recycle or make a new page
+-- 
+2.27.0
+
