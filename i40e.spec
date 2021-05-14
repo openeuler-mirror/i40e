@@ -9,7 +9,7 @@
 Name: i40e
 Summary: Intel(R) 40-10 Gigabit Ethernet Connection Network Driver
 Version: 2.14.13
-Release: 1
+Release: 2
 Vendor: Intel Corporation
 License: GPL-2.0
 URL: http://support.intel.com
@@ -17,7 +17,7 @@ Source0: https://downloadcenter.intel.com/download/24411/Intel-Network-Adapter-D
 
 Requires: kernel, findutils, gawk, bash
 
-BuildRequires: kernel-devel
+BuildRequires: kernel-devel hwdata elfutils-devel
 
 %description
 This package contains the Intel(R) 40-10 Gigabit Ethernet Connection Network Driver.
@@ -381,5 +381,8 @@ else
 fi
 
 %changelog
+* Sat Apr 17 2021 zhujunhao <zhujunhao8@huawei.com> - 2.14.13-2
+- fix install problem
+
 * Tue Feb 2 2021 seuzw <930zhaowei@163.com> - 2.14.13-1
 - Package init
