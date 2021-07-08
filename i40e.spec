@@ -9,7 +9,7 @@
 Name: i40e
 Summary: Intel(R) 40-10 Gigabit Ethernet Connection Network Driver
 Version: 2.14.13
-Release: 4
+Release: 5
 Vendor: Intel Corporation
 License: GPL-2.0
 URL: http://support.intel.com
@@ -19,7 +19,7 @@ Patch0001: fix-gcc9-new-warning.patch
 
 Requires: kernel, findutils, gawk, bash, hwdata
 
-BuildRequires: kernel-devel hwdata elfutils-devel uname-build-checks
+BuildRequires: kernel-devel hwdata elfutils-devel uname-build-checks gcc
 
 %description
 This package contains the Intel(R) 40-10 Gigabit Ethernet Connection Network Driver.
@@ -383,6 +383,12 @@ else
 fi
 
 %changelog
+* Wed Jul 7 2021 gaihuiying <gaihuiying1@huawei.com> - 2.14.13-5
+- Type:bugfix
+- ID:NA
+- SUG:NA
+- DESC:add dependency gcc
+
 * Tue Jul 6 2021 gaihuiying <gaihuiying1@huawei.com> - 2.14.13-4
 - Type:bugfix
 - ID:NA
