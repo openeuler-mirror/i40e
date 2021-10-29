@@ -35,24 +35,20 @@ Signed-off-by: Jakub Kicinski <kuba@kernel.org>
 Reference:https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=a222be597e316389f9f8c26033352c124ce93056
 Conflicting:Replaced some interface for adapting to the current kernel
 ---
- drivers/net/ethernet/intel/i40e/i40e_txrx.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
-
-(limited to 'drivers/net/ethernet/intel/i40e')
-
-diff --git a/drivers/net/ethernet/intel/i40e/i40e_txrx.c b/drivers/net/ethernet/intel/i40e/i40e_txrx.c
-index 3f25bd8c4924e..10a83e5385c70 100644
---- a/drivers/net/ethernet/intel/i40e/i40e_txrx.c
-+++ b/drivers/net/ethernet/intel/i40e/i40e_txrx.c
-@@ -3663,8 +3663,7 @@ u16 i40e_lan_select_queue(struct net_device *netdev,
+diff --git a/src/i40e_txrx.c b/src/i40e_txrx.c
+index 0ca5a17..8236cde 100644
+--- a/src/i40e_txrx.c
++++ b/src/i40e_txrx.c
+@@ -4189,8 +4189,7 @@ u16 i40e_lan_select_queue(struct net_device
+*netdev,
  
- 	/* is DCB enabled at all? */
- 	if (vsi->tc_config.numtc == 1)
--		return i40e_swdcb_skb_tx_hash(netdev, skb,
--					      netdev->real_num_tx_queues);
-+		return fallback(netdev, skb, sb_dev);
+        /* is DCB enabled at all? */
+        if (vsi->tc_config.numtc == 1)
+-               return i40e_swdcb_skb_tx_hash(netdev, skb,
+-                                             netdev->real_num_tx_queues);
++               return fallback(netdev, skb, sb_dev);
  
- 	prio = skb->priority;
- 	hw = &vsi->back->hw;
+        prio = skb->priority;
+        hw = &vsi->back->hw;
 -- 
 cgit 1.2.3-1.el7
