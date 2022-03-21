@@ -1,0 +1,70 @@
+From c9435bc25587a0f20b0bfd9d0d92acb05224e515 Mon Sep 17 00:00:00 2001
+From: chengyechun <chengyechun1@huawei.com>
+Date: Mon, 21 Mar 2022 10:58:09 +0800
+Subject: [PATCH] fix use-after-free in i40e_sync_filter_subtask()
+
+Conflict:NA
+Reference:https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/commit/log/?id=32845aa6020347fcae8d5e25548ecaef1f0c3e8a
+
+---
+ src/i40e_main.c | 23 +++++++++++++++++++++++
+ 1 file changed, 23 insertions(+)
+
+diff --git a/src/i40e_main.c b/src/i40e_main.c
+index 9aea7ca..c0f6055 100644
+--- a/src/i40e_main.c
++++ b/src/i40e_main.c
+@@ -145,6 +145,21 @@ MODULE_VERSION(DRV_VERSION);
+ 
+ static struct workqueue_struct *i40e_wq;
+ 
++static void netdev_hw_addr_refcnt(struct i40e_mac_filter *f, struct net_device *netdev, int delta)
++{
++        struct netdev_hw_addr *ha;
++        if (!f || !netdev)
++                return;
++        netdev_for_each_mc_addr(ha, netdev){
++                if (ether_addr_equal(ha->addr, f->macaddr)){
++                        ha->refcount += delta;
++                        if (ha->refcount <= 0)
++                                ha->refcount = 1;
++                        break;
++                }
++        }
++}
++
+ bool i40e_is_l4mode_enabled(void)
+ {
+ 	return l4mode > L4_MODE_DISABLED;
+@@ -2177,6 +2192,7 @@ static void i40e_undo_add_filter_entries(struct i40e_vsi *vsi,
+ 	hlist_for_each_entry_safe(new, h, from, hlist) {
+ 		/* We can simply free the wrapper structure */
+ 		hlist_del(&new->hlist);
++                netdev_hw_addr_refcnt(new->f, vsi->netdev, -1);
+ 		kfree(new);
+ 	}
+ }
+@@ -2578,6 +2594,10 @@ int i40e_sync_vsi_filters(struct i40e_vsi *vsi)
+ 			retval = i40e_correct_vf_mac_vlan_filters
+ 				(vsi, &tmp_add_list, &tmp_del_list,
+ 				 vlan_filters, pf->vf[vsi->vf_id].trusted);
++                
++                hlist_for_each_entry(new, &tmp_add_list, hlist)
++                        netdev_hw_addr_refcnt(new->f, vsi->netdev, 1);
++
+ 		if (retval)
+ 			goto err_no_memory_locked;
+ 
+@@ -2710,6 +2730,9 @@ int i40e_sync_vsi_filters(struct i40e_vsi *vsi)
+ 			if (new->f->state == I40E_FILTER_NEW)
+ 				new->f->state = new->state;
+ 			hlist_del(&new->hlist);
++
++                        netdev_hw_addr_refcnt(new->f, vsi->netdev, -1);
++
+ 			kfree(new);
+ 		}
+ 		spin_unlock_bh(&vsi->mac_filter_hash_lock);
+-- 
+1.8.3.1
+
