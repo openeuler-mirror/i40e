@@ -9,7 +9,7 @@
 Name: i40e
 Summary: Intel(R) 40-10 Gigabit Ethernet Connection Network Driver
 Version: 2.14.13
-Release: 9
+Release: 10
 Vendor: Intel Corporation
 License: GPL-2.0
 URL: http://support.intel.com
@@ -38,6 +38,16 @@ make -C src
 
 %install
 make -C src INSTALL_MOD_PATH=%{buildroot} MANDIR=%{_mandir} modules_install mandocs_install
+KERNELVERSION=`uname -r`
+KERNELVERSION=${KERNELVERSION%%-*}
+sed -i "s/kernel_version/${KERNELVERSION}\/*/g" ../../SOURCES/i40e.conf
+cd %{buildroot}
+KOPATH=`find lib -name "i40e.ko"`
+KOPATH="/"${KOPATH%/*}
+cd -
+sed -i "s#KO_dir#${KOPATH}#g" ../../SOURCES/i40e.conf
+install -m 644 -D ../../SOURCES/i40e.conf %{buildroot}/etc/depmod.d/i40e.conf
+
 # Remove modules files that we do not want to include
 find %{buildroot}/lib/modules/ -name 'modules.*' -exec rm -f {} \;
 cd %{buildroot}
@@ -49,6 +59,7 @@ find lib -name "i40e.ko" \
 rm -rf %{buildroot}
 
 %files -f file.list
+%verify(not md5 size mtime) %config(noreplace) /etc/depmod.d/i40e.conf
 %defattr(-,root,root)
 %doc README file.list pci.updates
 %license COPYING
@@ -388,6 +399,12 @@ else
 fi
 
 %changelog
+* Mon May 16 2022 chengyechun<chengyechun1@huawei.com> - 2.14.13-10
+- Type:bugfix
+- ID:NA
+- SUG:NA
+- DESC:add decoupling of kernel and package
+
 * Mon Mar 21 2022 chengyechun<chengyechun1@huawei.com> - 2.14.13-9
 - Type:bugfix
 - ID:NA
