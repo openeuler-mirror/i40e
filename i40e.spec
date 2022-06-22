@@ -9,7 +9,7 @@
 Name: i40e
 Summary: Intel(R) 40-10 Gigabit Ethernet Connection Network Driver
 Version: 2.14.13
-Release: 8
+Release: 9
 Vendor: Intel Corporation
 License: GPL-2.0
 URL: http://support.intel.com
@@ -18,6 +18,7 @@ Source0: https://downloadcenter.intel.com/download/24411/Intel-Network-Adapter-D
 Patch0001: fix-gcc9-new-warning.patch
 
 Patch6000: backport-extend-coalesce-setting-uAPI-with-CQE-mode.patch
+Patch6001: backport-extend-ringparam-setting-getting-API-with-rx_buf_len.patch
 
 Requires: kernel, findutils, gawk, bash, hwdata
 
@@ -385,7 +386,13 @@ else
 fi
 
 %changelog
-* Mon Jun 13 2022 chengyechun <chengyechun1@huawei.com> -2.14.13-8
+* Wed Jun 22 2022 chengyechun <chengyechun1@huawei.com> - 2.14.13-9
+- Type:bugfix
+- ID:NA
+- SUG:NA
+- DESC:extend ringparam setting/getting API with rx_buf_len
+
+* Mon Jun 13 2022 chengyechun <chengyechun1@huawei.com> - 2.14.13-8
 - Type:bugfix
 - ID:NA
 - SUG:NA
