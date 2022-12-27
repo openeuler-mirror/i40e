@@ -9,7 +9,7 @@
 Name: i40e
 Summary: Intel(R) 40-10 Gigabit Ethernet Connection Network Driver
 Version: 2.14.13
-Release: 3
+Release: 4
 Vendor: Intel Corporation
 License: GPL-2.0
 URL: http://support.intel.com
@@ -17,15 +17,15 @@ Source0: https://downloadcenter.intel.com/download/24411/Intel-Network-Adapter-D
 
 Patch6000: backport-fix-ATR-queue-selection.patch
 
-Requires: kernel, findutils, gawk, bash
+Requires: kernel, findutils, gawk, bash, hwdata
 
-BuildRequires: kernel-devel hwdata elfutils-devel
+BuildRequires: kernel-devel hwdata elfutils-devel uname-build-checks gcc
 
 %description
 This package contains the Intel(R) 40-10 Gigabit Ethernet Connection Network Driver.
 
 %prep
-%setup
+%autosetup -n %{name}-%{version} -p1
 
 %build
 make -C src clean
@@ -383,6 +383,12 @@ else
 fi
 
 %changelog
+* Mon Dec 26 2022 chengyechun <chengyechun1@huawei.com> - 2.14.13-4
+- Type:bugfix
+- ID:NA
+- SUG:NA
+- DESC:update patching mode
+
 * Sat Nov 6 2021 Aichun Li <liaichun@huawei.com> - 2.14.13-3
 - Type:bugfix
 - ID:NA
