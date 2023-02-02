@@ -9,7 +9,7 @@
 Name: i40e
 Summary: Intel(R) 40-10 Gigabit Ethernet Connection Network Driver
 Version: 2.22.8
-Release: 1
+Release: 2
 Vendor: Intel Corporation
 License: GPL-2.0
 URL: http://support.intel.com
@@ -381,6 +381,12 @@ else
 fi
 
 %changelog
+* Thu Feb 2 2023 chengyechun <chengyechun1@huawei.com> - 2.22.8-2
+- Type:bugfix
+- ID:NA
+- SUG:NA
+- DESC:remove i40e-2.14.13.tar.gz
+
 * Thu Feb 2 2023 chengyechun <chengyechun1@huawei.com> - 2.22.8-1
 - Type:bugfix
 - ID:NA
