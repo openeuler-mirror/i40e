@@ -9,11 +9,12 @@
 Name: i40e
 Summary: Intel(R) 40-10 Gigabit Ethernet Connection Network Driver
 Version: 2.22.8
-Release: 2
+Release: 3
 Vendor: Intel Corporation
 License: GPL-2.0
 URL: http://support.intel.com
 Source0: https://downloadmirror.intel.com/763931/%{name}-%{version}.tar.gz
+Patch0:  fix-riscv.patch
 
 Requires: kernel, findutils, gawk, bash, hwdata
 
@@ -381,6 +382,9 @@ else
 fi
 
 %changelog
+* Sat May 13 2023 yoo <sunyuechi@iscas.ac.cn> - 2.22.8-3
+- fix riscv build error
+
 * Thu Feb 2 2023 chengyechun <chengyechun1@huawei.com> - 2.22.8-2
 - Type:bugfix
 - ID:NA
