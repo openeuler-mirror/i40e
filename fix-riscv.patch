@@ -1,0 +1,25 @@
+diff -u -r i40e-2.22.8/src/i40e_txrx.c i40e-2.22.8/src/i40e_txrx.c
+--- i40e-2.22.8/src/i40e_txrx.c	2022-11-25 19:02:40.000000000 +0800
++++ i40e-2.22.8/src/i40e_txrx.c	2023-05-12 22:18:30.000000000 +0800
+@@ -2333,6 +2333,9 @@
+ 	if (unlikely(tsynvalid))
+ 		i40e_ptp_rx_hwtstamp(rx_ring->vsi->back, skb, tsyn);
+ #endif /* HAVE_PTP_1588_CLOCK */
++#ifndef HAVE_PTP_1588_CLOCK
++    u32 rx_ptype = 0;
++#endif
+ 
+ 	i40e_rx_hash(rx_ring, rx_desc, skb, rx_ptype);
+ 
+diff -u -r i40e-2.22.8/src/i40e_virtchnl_pf.c i40e-2.22.8/src/i40e_virtchnl_pf.c
+--- i40e-2.22.8/src/i40e_virtchnl_pf.c	2022-11-25 19:02:40.000000000 +0800
++++ i40e-2.22.8/src/i40e_virtchnl_pf.c	2023-05-12 22:29:52.000000000 +0800
+@@ -184,7 +184,7 @@
+ 		pci_read_config_word(pdev, pos + PCI_SRIOV_VF_DID, &vf_id);
+ 		vfdev = pci_get_device(pdev->vendor, vf_id, NULL);
+ 		while (vfdev) {
+-			if (vfdev->is_virtfn && vfdev->physfn == pdev)
++			if (vfdev->is_virtfn && vfdev->is_physfn == pdev)
+ 				pci_restore_msi_state(vfdev);
+ 			vfdev = pci_get_device(pdev->vendor, vf_id, vfdev);
+ 		}
