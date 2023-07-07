@@ -9,7 +9,7 @@
 Name: i40e
 Summary: Intel(R) 40-10 Gigabit Ethernet Connection Network Driver
 Version: 2.22.8
-Release: 3
+Release: 4
 Vendor: Intel Corporation
 License: GPL-2.0
 URL: http://support.intel.com
@@ -28,10 +28,18 @@ This package contains the Intel(R) 40-10 Gigabit Ethernet Connection Network Dri
 
 %build
 make -C src clean
-make -C src
+%if "%toolchain" == "clang"
+	make LLVM=1 LD=ld -C src
+%else
+	make -C src
+%endif
 
 %install
-make -C src INSTALL_MOD_PATH=%{buildroot} MANDIR=%{_mandir} modules_install mandocs_install
+%if "%toolchain" == "clang"
+	make LLVM=1 LD=ld -C src INSTALL_MOD_PATH=%{buildroot} MANDIR=%{_mandir} modules_install mandocs_install
+%else
+	make -C src INSTALL_MOD_PATH=%{buildroot} MANDIR=%{_mandir} modules_install mandocs_install
+%endif
 # Remove modules files that we do not want to include
 find %{buildroot}/lib/modules/ -name 'modules.*' -exec rm -f {} \;
 cd %{buildroot}
@@ -382,6 +390,9 @@ else
 fi
 
 %changelog
+* Fri Jul 07 2023 yoo <sunyuechi@iscas.ac.cn> - 2.22.8-4
+- fix clang build error
+
 * Sat May 13 2023 yoo <sunyuechi@iscas.ac.cn> - 2.22.8-3
 - fix riscv build error
 
